@@ -23,7 +23,7 @@
 #include "system.h"
 #define ConsoleError 	2	
 #include "copyright.h"
-
+#include <unistd.h>
 #include "nachossemtabla.h"
 #include "syscall.h"
 //#include <synch.h>
@@ -496,6 +496,7 @@ ExceptionHandler(ExceptionType which)
         switch (type)
         {
         case SC_Halt: //type = 0;
+        	printf ("Entra a halt");
             DEBUG('a', "Shutdown, initiated by user program.\n");
             interrupt->Halt();
             break;
@@ -563,27 +564,36 @@ ExceptionHandler(ExceptionType which)
         }
         break;
 	case PageFaultException:
+        //printf ("Entro en Page Fault Exception \n");
+        DEBUG ('n', "PAGE FAULT EXCEPTION"); 
         direccionLogica = machine->ReadRegister (39);
         numPag = direccionLogica/PageSize;
-        //posLibre = tlbBitMap->Find();
+        printf ("En page fault el numero de pagina es %d\n y la direccion es %d \n", numPag, direccionLogica);
+        if (numPag == 208||numPag == 0){
+        	sleep (15);
+        }
+        posLibre = tlbBitMap->Find();
 
 
         if (currentThread->space->pageTable[numPag].valid){//verifica el estado
             //copiar datos del pageTable al TLB
-
+		printf ("Pagina valida en pageTable"); 
+		sleep (5);
             if (posLibre >= 0){
-
+		printf ("Hay espacio en TLB");
+		sleep (5); 
                 machine -> tlb [indiceTLB].valid = true;
                 machine -> tlb [indiceTLB].use = currentThread->space->pageTable [numPag].use;
                 machine -> tlb [indiceTLB].dirty = currentThread->space->pageTable [numPag].dirty;
                 machine -> tlb [indiceTLB].readOnly = currentThread->space->pageTable [numPag].readOnly;
                 machine -> tlb[indiceTLB].virtualPage = currentThread->space->pageTable[numPag].virtualPage;
-        break;
+        //break;
                 machine -> tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage;
                 indiceTLB = indiceTLB++ %4;
             } else {
                 //si no hay posiciones libres en el TLB
-
+		printf ("No hay posiciones libres en el TLB"); 
+		sleep (5); 
 				bool guardado = false;
 				int i = 0;
 				while (i < currentThread->space->numPages && !guardado){
@@ -612,13 +622,15 @@ ExceptionHandler(ExceptionType which)
 
 				if (direccionLogica < currentThread->space->encabezado.initData.size){
                 //es pagina de codigo o datos inicializados
-                
+                		
+                		printf ("La pagina es de codigo o de datos inicializados");
+				sleep (5);
 				OpenFile* archivo;
 				int frameDisponible =MapaMemoria -> Find();
-				bool abierto = buscarArchivoAbierto(currentThread->space->nombreArchivo);	//revisa si el archivo ejecutable originakl sigue abierto
+				bool abierto = buscarArchivoAbierto(currentThread->nombreArchivo);	//revisa si el archivo ejecutable originakl sigue abierto
 				if (!abierto){
 					//si el archivo ya esta cerrado, se vuelve a abrir
-					archivo = fileSystem->Open(currentThread->space->nombreArchivo);
+					archivo = fileSystem->Open(currentThread->nombreArchivo);
 				}
 				else {
 					archivo = currentThread->space->archivoEjecutable;	//g
@@ -645,6 +657,8 @@ ExceptionHandler(ExceptionType which)
 				indiceTLB = indiceTLB++%4;
        		}
             else {
+            printf ("es de datos no inicializados o pila");
+            sleep (5);
                 //datos no inicializados o pila
                 int frameDisponible =MapaMemoria -> Find();
                 if (frameDisponible < 0){

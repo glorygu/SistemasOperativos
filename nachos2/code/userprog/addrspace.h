@@ -37,6 +37,7 @@ class AddrSpace {
     unsigned int numPages;
     NoffHeader  encabezado;
     OpenFile * archivoEjecutable;
+    
     //int numPages;
  //   Semaphore * semHilo;
   private:

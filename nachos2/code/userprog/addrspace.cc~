@@ -18,7 +18,7 @@
 #include "copyright.h"
 #include "system.h"
 #include "addrspace.h"
-//d#include "noff.h"
+//#include "noff.h"
 
 //----------------------------------------------------------------------
 // SwapHeader
@@ -96,7 +96,11 @@ AddrSpace::AddrSpace(OpenFile *executable)
         pageTable[i].virtualPage = i;
         j = MiMapa->Find ( );
         pageTable[i].physicalPage = j;
+    #ifdef VM
+    	pageTable[i].valid = false;
+	#else
         pageTable[i].valid = true;
+        #endif
         pageTable[i].use = false;
         pageTable[i].dirty = false ;
         pageTable[i].readOnly = false;  // if the code segment was entirely on
@@ -216,6 +220,9 @@ void AddrSpace::SaveState()
 
 void AddrSpace::RestoreState()
 {
+    #ifndef VM
+    printf ("en restore state"); 
     machine->pageTable = pageTable;
     machine->pageTableSize = numPages;
+	#endif
 }
