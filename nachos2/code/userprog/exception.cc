@@ -565,7 +565,7 @@ ExceptionHandler(ExceptionType which)
 	case PageFaultException:
         direccionLogica = machine->ReadRegister (39);
         numPag = direccionLogica/PageSize;
-        posLibre = tlbBitMap->Find();
+        //posLibre = tlbBitMap->Find();
 
 
         if (currentThread->space->pageTable[numPag].valid){//verifica el estado
@@ -574,13 +574,13 @@ ExceptionHandler(ExceptionType which)
             if (posLibre >= 0){
 
                 machine -> tlb [indiceTLB].valid = true;
-                machine -> tlb [indiceTLB].use = currentThread->space->pageTable [numPag].use;//???
+                machine -> tlb [indiceTLB].use = currentThread->space->pageTable [numPag].use;
                 machine -> tlb [indiceTLB].dirty = currentThread->space->pageTable [numPag].dirty;
                 machine -> tlb [indiceTLB].readOnly = currentThread->space->pageTable [numPag].readOnly;
                 machine -> tlb[indiceTLB].virtualPage = currentThread->space->pageTable[numPag].virtualPage;
         break;
                 machine -> tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage;
-                indiceTLB = indiceTLB++%4; //algoritmo de reemplazo
+                indiceTLB = indiceTLB++ %4;
             } else {
                 //si no hay posiciones libres en el TLB
 
@@ -600,6 +600,7 @@ ExceptionHandler(ExceptionType which)
                 machine -> tlb[indiceTLB].readOnly = currentThread->space->pageTable [numPag].readOnly;
                 machine -> tlb[indiceTLB].virtualPage = currentThread->space->pageTable[numPag].virtualPage;
                 machine -> tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage;
+                indiceTLB = indiceTLB++%4;  //algoritmo de reemplazo
             }
         } else {
             //si la p[gina es inválida (no esta en pageTable)
@@ -609,15 +610,15 @@ ExceptionHandler(ExceptionType which)
 			} else {
                 //si la pagina no ha sido modificada (limpia)
 
-				if (direccionLogica < currentThread->encabezado.initData.size){
+				if (direccionLogica < currentThread->space->encabezado.initData.size){
                 //es pagina de codigo o datos inicializados
                 
 				OpenFile* archivo;
 				int frameDisponible =MapaMemoria -> Find();
-				bool abierto = buscarArchivoAbierto(currentThread->nombreArchivo);	//revisa si el archivo ejecutable originakl sigue abierto
+				bool abierto = buscarArchivoAbierto(currentThread->space->nombreArchivo);	//revisa si el archivo ejecutable originakl sigue abierto
 				if (!abierto){
 					//si el archivo ya esta cerrado, se vuelve a abrir
-					archivo = fileSystem->Open(currentThread->nombreArchivo);
+					archivo = fileSystem->Open(currentThread->space->nombreArchivo);
 				}
 				else {
 					archivo = currentThread->space->archivoEjecutable;	//g
@@ -627,10 +628,10 @@ ExceptionHandler(ExceptionType which)
 					//si no hay frame libre, crear uno
 					
 				}
-				archivo -> ReadAt(machine -> mainMemory[frameDisponible*PageSize], PageSize, direccionLogica);
+				archivo -> ReadAt(&(machine -> mainMemory[frameDisponible*PageSize]), PageSize, direccionLogica);
 				currentThread->space->pageTable[numPag].physicalPage = frameDisponible;
 				currentThread->space->pageTable[numPag].valid = true;
-				if (direccionLogica < currentThread->encabezado.code.size){
+				if (direccionLogica < currentThread->space->encabezado.code.size){
 					//si es pagina de codigo no se deberia poder modificar
 					currentThread->space->pageTable[numPag].readOnly = true;
 				}
@@ -640,9 +641,26 @@ ExceptionHandler(ExceptionType which)
 				machine->tlb[indiceTLB].virtualPage = currentThread->space->pageTable[numPag].virtualPage;
 				machine->tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage;
 				machine->tlb[indiceTLB].readOnly = currentThread->space->pageTable[numPag].readOnly;
-            }
+				machine->tlb[indiceTLB].valid = true;
+				indiceTLB = indiceTLB++%4;
+       		}
             else {
                 //datos no inicializados o pila
+                int frameDisponible =MapaMemoria -> Find();
+                if (frameDisponible < 0){
+					//preunta si hay frame libre en memoria
+					//si no hay frame libre, crear uno
+					
+				}
+				currentThread->space->pageTable[numPag].physicalPage = frameDisponible;
+				currentThread->space->pageTable[numPag].valid = true;
+				currentThread->space->pageTable[numPag].readOnly = false;
+				
+				machine->tlb[indiceTLB].virtualPage = currentThread->space->pageTable[numPag].virtualPage;
+				machine->tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage;
+				machine->tlb[indiceTLB].readOnly = currentThread->space->pageTable[numPag].readOnly;
+				machine->tlb[indiceTLB].valid = true;
+				indiceTLB = indiceTLB++%4;
             }
         
 	 }
