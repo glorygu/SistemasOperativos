@@ -11,8 +11,8 @@ Swap::Swap(SpaceId sid, int pageNum){
 
   fileSystem->Create(swapFileName.c_str(), pageNum * PageSize);
   swapFile = fileSystem->Open(swapFileName.c_str());
-  bitmapSwap = new BitMap (pageNum);
-  //swapMap.resize(pageNum, false);
+  bitmapSwap = new BitaMap (pageNum);
+  swapMap.resize(pageNum, false);
   id = sid;
 }
 
@@ -21,7 +21,7 @@ Swap::~Swap(){
   fileSystem->Remove(swapFileName.c_str());
 }
 
-// Saca una pagina de swap a memoria  
+// Retrieves a page from the swap file into main memory
 bool Swap::sacarDelSwap(int page, int frame){
   
 

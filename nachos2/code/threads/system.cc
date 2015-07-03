@@ -17,6 +17,12 @@ Scheduler *scheduler;			// the ready list
 Interrupt *interrupt;			// interrupt status
 Statistics *stats;			// performance metrics
 Timer *timer;				// the hardware timer device,
+
+char* ArchivosAbiertos [32];
+int indiceTLB;
+int indiceMemoria;
+BitMap * MapaMemoria;
+BitMap *tlbBitMap;
 					// for invoking context switches
 
 #ifdef FILESYS_NEEDED
@@ -30,6 +36,13 @@ SynchDisk   *synchDisk;
 #ifdef USER_PROGRAM	// requires either FILESYS or FILESYS_STUB
 BitMap *MiMapa = new BitMap (32);
 Machine *machine;	// user program memory and registers
+
+//char* ArchivosAbiertos [32];
+//int indiceTLB;
+//int indiceMemoria;
+//BitMap * MapaMemoria;
+//BitMap *tlbBitMap;
+
 #endif
 
 #ifdef NETWORK
