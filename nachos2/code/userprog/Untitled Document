@@ -1,0 +1,10 @@
+#include "nachostabla.h"
+
+void NachosTabla::addThread (){
+	usage++;
+}
+
+
+void NachosTabla::delThread (){
+	usage--;
+}
