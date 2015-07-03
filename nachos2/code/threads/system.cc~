@@ -21,8 +21,8 @@ Timer *timer;				// the hardware timer device,
 char* ArchivosAbiertos [32];
 int indiceTLB;
 int indiceMemoria;
-BitMap * MapaMemoria;
-BitMap *tlbBitMap;
+BitMap * MapaMemoria = new BitMap (32);
+BitMap *tlbBitMap = new BitMap (4);
 					// for invoking context switches
 
 #ifdef FILESYS_NEEDED
@@ -37,11 +37,11 @@ SynchDisk   *synchDisk;
 BitMap *MiMapa = new BitMap (32);
 Machine *machine;	// user program memory and registers
 
-char* ArchivosAbiertos [32];
-int indiceTLB;
-int indiceMemoria;
-BitMap * MapaMemoria;
-BitMap *tlbBitMap;
+//char* ArchivosAbiertos [32];
+//int indiceTLB;
+//int indiceMemoria;
+//BitMap * MapaMemoria;
+//BitMap *tlbBitMap;
 
 #endif
 

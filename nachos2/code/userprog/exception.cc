@@ -23,6 +23,7 @@
 #include "system.h"
 #define ConsoleError 	2	
 #include "copyright.h"
+// returnFromSystemCall
 #include <unistd.h>
 #include "nachossemtabla.h"
 #include "syscall.h"
@@ -35,7 +36,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <fcntl.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <thread.h>
 
 #include <string.h>
@@ -107,7 +108,7 @@ void Nachos_Open()
         correcto = machine->ReadMem (dirNombre, 1, &valor);
         valorChar = valor;
         if (correcto)
-        {
+{
             nombre [i] = valorChar;
             i++;
             dirNombre++;
@@ -455,7 +456,8 @@ void Nachos_Exec ( )
             cout << "error lectura al abrir"<<endl;
         }
     }
-//	StartProcess(nombre);
+//	StartProcess(nombre);}
+
     machine->WriteRegister (2, spcID);
     returnFromSystemCall();
 }
@@ -471,7 +473,7 @@ bool buscarArchivoAbierto(char * nombreArchivo )
     bool encontrado = false;
     for (int i =0; i < 32; i++)
     {
-        if (strcmp(ArchivosAbiertos[i],nombreArchivo)==0)
+        if (ArchivosAbiertos[i] != 0 && strcmp(ArchivosAbiertos[i],nombreArchivo)==0)
         {
             encontrado = true;
         }
@@ -564,13 +566,13 @@ ExceptionHandler(ExceptionType which)
         }
         break;
 	case PageFaultException:
-        //printf ("Entro en Page Fault Exception \n");
+        printf ("Entro en Page Fault Exception %d\n", PageFaultException);
         DEBUG ('n', "PAGE FAULT EXCEPTION"); 
         direccionLogica = machine->ReadRegister (39);
         numPag = direccionLogica/PageSize;
-        printf ("En page fault el numero de pagina es %d\n y la direccion es %d \n", numPag, direccionLogica);
+        printf ("En page fault el numero de pagina es %d\n y la direccion es %d, initDataSize %d, codeSize %d \n", numPag, direccionLogica,currentThread->space->encabezado.initData.size,currentThread->space->encabezado.code.size);
         if (numPag == 208||numPag == 0){
-        	sleep (15);
+        	sleep (5);
         }
         posLibre = tlbBitMap->Find();
 
@@ -614,28 +616,37 @@ ExceptionHandler(ExceptionType which)
             }
         } else {
             //si la p[gina es inválida (no esta en pageTable)
+            printf ("Pagina invalida \n"); 
             if (currentThread->space->pageTable [numPag].dirty){
+                printf ("Pagina sucia \n"); 
                 //si la pagina fue modificada (dirty)
                 //sacar de swap
 			} else {
+			printf ("Pagina limpia \n"); 
                 //si la pagina no ha sido modificada (limpia)
-
-				if (direccionLogica < currentThread->space->encabezado.initData.size){
+			printf ("Pagina limpia %d \n", currentThread->space->encabezado.initData.size);
+				if (direccionLogica <= currentThread->space->encabezado.initData.size){
                 //es pagina de codigo o datos inicializados
                 		
                 		printf ("La pagina es de codigo o de datos inicializados");
 				sleep (5);
 				OpenFile* archivo;
 				int frameDisponible =MapaMemoria -> Find();
-				bool abierto = buscarArchivoAbierto(currentThread->nombreArchivo);	//revisa si el archivo ejecutable originakl sigue abierto
+				printf (currentThread->nombreArchivo);
+				bool abierto =true;// buscarArchivoAbierto(currentThread->nombreArchivo);	//revisa si el archivo ejecutable originakl sigue abierto
+				printf ("pregunta si esta abierto \n"); 
 				if (!abierto){
 					//si el archivo ya esta cerrado, se vuelve a abrir
+					printf("Archivo cerrado"); 
 					archivo = fileSystem->Open(currentThread->nombreArchivo);
 				}
 				else {
+				printf ("archivo abierto"); 
 					archivo = currentThread->space->archivoEjecutable;	//g
 				}
+				printf ("Se supone que ya reviso archivo \n");
 				if (frameDisponible < 0){
+					printf ("no hay frame disponible"); 
 					//preunta si hay frame libre en memoria
 					//si no hay frame libre, crear uno
 					
@@ -645,6 +656,7 @@ ExceptionHandler(ExceptionType which)
 				currentThread->space->pageTable[numPag].valid = true;
 				if (direccionLogica < currentThread->space->encabezado.code.size){
 					//si es pagina de codigo no se deberia poder modificar
+					printf ("ES pagina de codigo \n"); 
 					currentThread->space->pageTable[numPag].readOnly = true;
 				}
 				else {
@@ -654,7 +666,7 @@ ExceptionHandler(ExceptionType which)
 				machine->tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage;
 				machine->tlb[indiceTLB].readOnly = currentThread->space->pageTable[numPag].readOnly;
 				machine->tlb[indiceTLB].valid = true;
-				indiceTLB = indiceTLB++%4;
+				indiceTLB = (indiceTLB++)%4;
        		}
             else {
             printf ("es de datos no inicializados o pila");

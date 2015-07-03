@@ -19,10 +19,10 @@ Statistics *stats;			// performance metrics
 Timer *timer;				// the hardware timer device,
 
 char* ArchivosAbiertos [32];
-int indiceTLB;
-int indiceMemoria;
-BitMap * MapaMemoria;
-BitMap *tlbBitMap;
+int indiceTLB = 0;
+int indiceMemoria = 0;
+BitMap * MapaMemoria = new BitMap (32);
+BitMap *tlbBitMap = new BitMap (4);
 					// for invoking context switches
 
 #ifdef FILESYS_NEEDED

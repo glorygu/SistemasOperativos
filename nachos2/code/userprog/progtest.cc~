@@ -32,7 +32,7 @@ StartProcess(char *filename)
     }
     space = new AddrSpace(executable);    
     currentThread->space = space;
-
+    currentThread->nombreArchivo = filename; 
     delete executable;			// close file
 
     space->InitRegisters();		// set the initial register values
