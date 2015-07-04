@@ -4,11 +4,11 @@
 #include <sstream>
 
 //definir pageNum como 64 adonde no se, puede ser en system o machine
-//crear el swap en system y definirlo por todo lado 
+//crear el swap en system y definirlo por todo lado
 Swap::Swap( ){
-  
+
   std::stringstream nameStream;
-  nameStream << "Swap." << sid;
+  nameStream << "Swap.";
   nombreArchivoSwap = nameStream.str();
 
   fileSystem->Create(archivoSwapName.c_str(), pageNum * PageSize);
@@ -23,10 +23,10 @@ Swap::~Swap(){
   //fileSystem->Remove(archivoSwapName.c_str());
 }
 
-// Saca una pagina de swap a memoria  
+// Saca una pagina de swap a memoria
 //page es la pagina a sacar del swap y frame es el frame en memoria donde se va a meter la informacion de page
 bool Swap::sacarDelSwap(int page, int frame){
-  
+
 
   int cantidadInfoLeida;
   char* dest = machine->mainMemory + frame * PageSize; //no es necesario si tenemos la tabla invertida xq si se tiene le damos ipt[frame]
@@ -37,8 +37,8 @@ bool Swap::sacarDelSwap(int page, int frame){
   //verifica que lo que leyo sea del mismo tamaño que PageSize
   if (leyoBien){
 
-	currentThread->space->PageTable[page].valid = true; 
-	currentThread->space->PageTable[page].dirty =true; 
+	currentThread->space->PageTable[page].valid = true;
+	currentThread->space->PageTable[page].dirty =true;
   }
 
   return leyoBien;
@@ -51,12 +51,12 @@ bool Swap::meterAlSwap(int frame){
 
 
   int page = space->getPageNumber(frame);
-//saca de la tabla invertida 
+//saca de la tabla invertida
 
   TranslationEntry entrada = currentThread->space->PageTable[page];
-//el dirty lo hacemos afuera 
-  if (entry.dirty || !isSwaped(page)){ //preguntar si no esta en el swap 
-    
+//el dirty lo hacemos afuera
+  if (entry.dirty || !isSwaped(page)){ //preguntar si no esta en el swap
+
     int charsWritten;
     char* source = machine->mainMemory + frame * PageSize; //lo que se va a mentar
 
