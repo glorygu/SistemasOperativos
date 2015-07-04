@@ -21,7 +21,7 @@
 // All rights reserved.  See copyright.h for copyright notice and limitation
 // of liability and disclaimer of warranty provisions.
 #include "system.h"
-#define ConsoleError 	2	
+#define ConsoleError 	2
 #include "copyright.h"
 // returnFromSystemCall
 #include <unistd.h>
@@ -108,7 +108,7 @@ void Nachos_Open()
         correcto = machine->ReadMem (dirNombre, 1, &valor);
         valorChar = valor;
         if (correcto)
-{
+        {
             nombre [i] = valorChar;
             i++;
             dirNombre++;
@@ -333,10 +333,12 @@ void Nachos_SemDestroy ( )
     returnFromSystemCall();
 }
 
-void Nachos_SemSignal() {
+void Nachos_SemSignal()
+{
     int SemId = machine -> ReadRegister(4);
     int codigo = -1;
-    if (semTabla -> isOpened(SemId)) {
+    if (semTabla -> isOpened(SemId))
+    {
         Semaphore* Sem = (Semaphore*)(semTabla -> getSemHandle(SemId));
         Sem -> V();
         codigo = 0;
@@ -345,10 +347,12 @@ void Nachos_SemSignal() {
     returnFromSystemCall();
 }
 
-void Nachos_SemWait() {
+void Nachos_SemWait()
+{
     int SemId = machine -> ReadRegister(4);
     int codigo = -1;
-    if (semTabla -> isOpened(SemId)) {
+    if (semTabla -> isOpened(SemId))
+    {
         Semaphore* Sem = (Semaphore*)(semTabla -> getSemHandle(SemId));
         Sem -> P();
         codigo = 0;
@@ -356,7 +360,8 @@ void Nachos_SemWait() {
     machine -> WriteRegister(2, codigo);
     returnFromSystemCall();
 }
-void NachosForkThread(int p) {
+void NachosForkThread(int p)
+{
     AddrSpace *space;
     space = currentThread -> space;
     space -> InitRegisters();
@@ -369,7 +374,8 @@ void NachosForkThread(int p) {
     ASSERT(false);
 }
 
-void Nachos_Fork() {
+void Nachos_Fork()
+{
     int proceso = machine -> ReadRegister(4);
     Thread * newT = new Thread("Proceso de Fork");
     newT -> space = new AddrSpace(currentThread -> space);
@@ -380,10 +386,12 @@ void Nachos_Fork() {
 
 
 
-void Nachos_Join() {
+void Nachos_Join()
+{
     int hijoId = machine -> ReadRegister(4);
     currentThread -> semHilo = new Semaphore("Semaforo para comunicarse con hijos", 0);
-    if (currentThread -> tabla -> isOpened(hijoId)) {
+    if (currentThread -> tabla -> isOpened(hijoId))
+    {
         Thread * hijo = (Thread *)currentThread -> tabla -> getHiloHandle(hijoId);
         hijo-> semHilo = currentThread -> semHilo;
         currentThread ->semHilo -> P();
@@ -395,7 +403,8 @@ void Nachos_Exit ( )
 {
     int status = machine->ReadRegister (4);
     int tamano = currentThread->space->numPages;
-    for (int i = 0; i < tamano; i++){
+    for (int i = 0; i < tamano; i++)
+    {
         MiMapa->Clear(currentThread->space->pageTable[i].physicalPage);
     }
     machine->WriteRegister (2, status);
@@ -413,7 +422,7 @@ StartProcess(char *filename)
 	printf("Unable to open file %s\n", filename);
 	return;
     }
-    space = new AddrSpace(executable);    
+    space = new AddrSpace(executable);
     currentThread->space = space;
 
     delete executable;			// close file
@@ -428,7 +437,8 @@ StartProcess(char *filename)
 }
 **/
 void Nachos_Exec ( )
-{//va a devolver un spaceId que es el indice de la tabla de hijos
+{
+    //va a devolver un spaceId que es el indice de la tabla de hijos
 //del proceso que se acaba de crear
     int spcID = 0;
     int dirNombre = machine->ReadRegister (4);
@@ -498,7 +508,7 @@ ExceptionHandler(ExceptionType which)
         switch (type)
         {
         case SC_Halt: //type = 0;
-        	printf ("Entra a halt");
+            printf ("Entra a halt");
             DEBUG('a', "Shutdown, initiated by user program.\n");
             interrupt->Halt();
             break;
@@ -565,133 +575,170 @@ ExceptionHandler(ExceptionType which)
             break;
         }
         break;
-	case PageFaultException:
+    case PageFaultException:
         printf ("Entro en Page Fault Exception %d\n", PageFaultException);
-        DEBUG ('n', "PAGE FAULT EXCEPTION"); 
+        DEBUG ('n', "PAGE FAULT EXCEPTION");
         direccionLogica = machine->ReadRegister (39);
         numPag = direccionLogica/PageSize;
         printf ("En page fault el numero de pagina es %d\n y la direccion es %d, initDataSize %d, codeSize %d \n", numPag, direccionLogica,currentThread->space->encabezado.initData.size,currentThread->space->encabezado.code.size);
-        if (numPag == 208||numPag == 0){
-        	sleep (5);
+        if (numPag == 208||numPag == 0)
+        {
+            sleep (5);
         }
         posLibre = tlbBitMap->Find();
 
 
-        if (currentThread->space->pageTable[numPag].valid){//verifica el estado
+        if (currentThread->space->pageTable[numPag].valid) //verifica el estado
+        {
             //copiar datos del pageTable al TLB
-		printf ("Pagina valida en pageTable"); 
-		sleep (5);
-            if (posLibre >= 0){
-		printf ("Hay espacio en TLB");
-		sleep (5); 
+            printf ("Pagina valida en pageTable");
+            sleep (5);
+            if (posLibre >= 0)
+            {
+                printf ("Hay espacio en TLB");
+                sleep (5);
                 machine -> tlb [indiceTLB].valid = true;
                 machine -> tlb [indiceTLB].use = currentThread->space->pageTable [numPag].use;
                 machine -> tlb [indiceTLB].dirty = currentThread->space->pageTable [numPag].dirty;
                 machine -> tlb [indiceTLB].readOnly = currentThread->space->pageTable [numPag].readOnly;
                 machine -> tlb[indiceTLB].virtualPage = currentThread->space->pageTable[numPag].virtualPage;
-        //break;
+                //break;
                 machine -> tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage;
-                indiceTLB = indiceTLB++ %4;
-            } else {
+                if (indiceTLB > 3)
+                {
+                    indiceTLB = 0;
+                }
+                else indiceTLB ++;
+            }
+            else
+            {
                 //si no hay posiciones libres en el TLB
-		printf ("No hay posiciones libres en el TLB"); 
-		sleep (5); 
-				bool guardado = false;
-				int i = 0;
-				while (i < currentThread->space->numPages && !guardado){
-					if (currentThread->space->pageTable[i].virtualPage == machine -> tlb[indiceTLB].virtualPage){
-						currentThread->space->pageTable[i].dirty = machine -> tlb[indiceTLB].dirty;
-						currentThread->space->pageTable[i].use = machine -> tlb[indiceTLB].use;
-						guardado = true;
-					}
-					i++;
-				}
-				machine -> tlb[indiceTLB].valid = true;
+                printf ("No hay posiciones libres en el TLB");
+                sleep (5);
+                bool guardado = false;
+                int i = 0;
+                while (i < currentThread->space->numPages && !guardado)
+                {
+                    if (currentThread->space->pageTable[i].virtualPage == machine -> tlb[indiceTLB].virtualPage)
+                    {
+                        currentThread->space->pageTable[i].dirty = machine -> tlb[indiceTLB].dirty;
+                        currentThread->space->pageTable[i].use = machine -> tlb[indiceTLB].use;
+                        guardado = true;
+                    }
+                    i++;
+                }
+                machine -> tlb[indiceTLB].valid = true;
                 machine -> tlb[indiceTLB].use = currentThread->space->pageTable [numPag].use;//???
                 machine -> tlb[indiceTLB].dirty = currentThread->space->pageTable [numPag].dirty;
                 machine -> tlb[indiceTLB].readOnly = currentThread->space->pageTable [numPag].readOnly;
                 machine -> tlb[indiceTLB].virtualPage = currentThread->space->pageTable[numPag].virtualPage;
                 machine -> tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage;
-                indiceTLB = indiceTLB++%4;  //algoritmo de reemplazo
+                if (indiceTLB > 3)
+                {
+                    indiceTLB = 0;
+                }
+                else indiceTLB ++;
             }
-        } else {
+        }
+        else
+        {
             //si la p[gina es inválida (no esta en pageTable)
-            printf ("Pagina invalida \n"); 
-            if (currentThread->space->pageTable [numPag].dirty){
-                printf ("Pagina sucia \n"); 
+            printf ("Pagina invalida \n");
+            if (currentThread->space->pageTable [numPag].dirty)
+            {
+                printf ("Pagina sucia \n");
                 //si la pagina fue modificada (dirty)
-                //sacar de swap
-			} else {
-			printf ("Pagina limpia \n"); 
-                //si la pagina no ha sido modificada (limpia)
-			printf ("Pagina limpia %d \n", currentThread->space->encabezado.initData.size);
-				if (direccionLogica <= currentThread->space->encabezado.initData.size){
-                //es pagina de codigo o datos inicializados
-                		
-                		printf ("La pagina es de codigo o de datos inicializados");
-				sleep (5);
-				OpenFile* archivo;
-				int frameDisponible =MapaMemoria -> Find();
-				printf (currentThread->nombreArchivo);
-				bool abierto =true;// buscarArchivoAbierto(currentThread->nombreArchivo);	//revisa si el archivo ejecutable originakl sigue abierto
-				printf ("pregunta si esta abierto \n"); 
-				if (!abierto){
-					//si el archivo ya esta cerrado, se vuelve a abrir
-					printf("Archivo cerrado"); 
-					archivo = fileSystem->Open(currentThread->nombreArchivo);
-				}
-				else {
-				printf ("archivo abierto"); 
-					archivo = currentThread->space->archivoEjecutable;	//g
-				}
-				printf ("Se supone que ya reviso archivo \n");
-				if (frameDisponible < 0){
-					printf ("no hay frame disponible"); 
-					//preunta si hay frame libre en memoria
-					//si no hay frame libre, crear uno
-					
-				}
-				archivo -> ReadAt(&(machine -> mainMemory[frameDisponible*PageSize]), PageSize, direccionLogica);
-				currentThread->space->pageTable[numPag].physicalPage = frameDisponible;
-				currentThread->space->pageTable[numPag].valid = true;
-				if (direccionLogica < currentThread->space->encabezado.code.size){
-					//si es pagina de codigo no se deberia poder modificar
-					printf ("ES pagina de codigo \n"); 
-					currentThread->space->pageTable[numPag].readOnly = true;
-				}
-				else {
-					currentThread->space->pageTable[numPag].readOnly = false;
-				}
-				machine->tlb[indiceTLB].virtualPage = currentThread->space->pageTable[numPag].virtualPage;
-				machine->tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage;
-				machine->tlb[indiceTLB].readOnly = currentThread->space->pageTable[numPag].readOnly;
-				machine->tlb[indiceTLB].valid = true;
-				indiceTLB = (indiceTLB++)%4;
-       		}
-            else {
-            printf ("es de datos no inicializados o pila");
-            sleep (5);
-                //datos no inicializados o pila
-                int frameDisponible =MapaMemoria -> Find();
-                if (frameDisponible < 0){
-					//preunta si hay frame libre en memoria
-					//si no hay frame libre, crear uno
-					
-				}
-				currentThread->space->pageTable[numPag].physicalPage = frameDisponible;
-				currentThread->space->pageTable[numPag].valid = true;
-				currentThread->space->pageTable[numPag].readOnly = false;
-				
-				machine->tlb[indiceTLB].virtualPage = currentThread->space->pageTable[numPag].virtualPage;
-				machine->tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage;
-				machine->tlb[indiceTLB].readOnly = currentThread->space->pageTable[numPag].readOnly;
-				machine->tlb[indiceTLB].valid = true;
-				indiceTLB = indiceTLB++%4;
+                //sacar de swap, se le manda como parametro el numPag y el frame libre de memoria
             }
-        
-	 }
-	}
-	break;
+            else
+            {
+                printf ("Pagina limpia \n");
+                //si la pagina no ha sido modificada (limpia)
+                printf ("Pagina limpia %d \n", currentThread->space->encabezado.initData.size);
+                if (direccionLogica <= currentThread->space->encabezado.initData.size)
+                {
+                    //es pagina de codigo o datos inicializados
+                    //tiene que cargar
+                    printf ("La pagina es de codigo o de datos inicializados");
+                    sleep (5);
+                    OpenFile* archivo;
+                    int frameDisponible =MapaMemoria -> Find();
+                    printf (currentThread->nombreArchivo);
+                    bool abierto =true;// buscarArchivoAbierto(currentThread->nombreArchivo);	//revisa si el archivo ejecutable originakl sigue abierto
+                    printf ("pregunta si esta abierto \n");
+                    if (!abierto)
+                    {
+                        //si el archivo ya esta cerrado, se vuelve a abrir
+                        printf("Archivo cerrado");
+                        archivo = fileSystem->Open(currentThread->nombreArchivo);
+                    }
+                    else
+                    {
+                        printf ("archivo abierto");
+                        archivo = currentThread->space->archivoEjecutable;	//g
+                    }
+                    //se carga del archivo a memoria
+                    printf ("Se supone que ya reviso archivo \n");
+                    if (frameDisponible < 0)
+                    {
+                        printf ("no hay frame disponible");
+                        //preunta si hay frame libre en memoria
+                        //si no hay frame libre, crear uno
+
+                    }
+                    archivo -> ReadAt(&(machine -> mainMemory[frameDisponible*PageSize]), PageSize, direccionLogica);
+                    currentThread->space->pageTable[numPag].physicalPage = frameDisponible;
+                    currentThread->space->pageTable[numPag].valid = true;
+                    if (direccionLogica < currentThread->space->encabezado.code.size)
+                    {
+                        //si es pagina de codigo no se deberia poder modificar
+                        printf ("ES pagina de codigo \n");
+                        currentThread->space->pageTable[numPag].readOnly = true;
+                    }
+                    else
+                    {
+                        currentThread->space->pageTable[numPag].readOnly = false;
+                    }
+                    machine->tlb[indiceTLB].virtualPage = currentThread->space->pageTable[numPag].virtualPage;
+                    machine->tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage;
+                    machine->tlb[indiceTLB].readOnly = currentThread->space->pageTable[numPag].readOnly;
+                    machine->tlb[indiceTLB].valid = true;
+                    if (indiceTLB > 3)
+                    {
+                        indiceTLB = 0;
+                    }
+                    else indiceTLB ++;
+                }
+                else
+                {
+                    printf ("es de datos no inicializados o pila");
+                    sleep (5);
+                    //datos no inicializados o pila
+                    int frameDisponible =MapaMemoria -> Find();
+                    if (frameDisponible < 0)
+                    {
+                        //preunta si hay frame libre en memoria
+                        //si no hay frame libre, crear uno
+
+                    }
+                    currentThread->space->pageTable[numPag].physicalPage = frameDisponible;
+                    currentThread->space->pageTable[numPag].valid = true;
+                    currentThread->space->pageTable[numPag].readOnly = false;
+                    //Actualizar TLB
+                    machine->tlb[indiceTLB].virtualPage = currentThread->space->pageTable[numPag].virtualPage;
+                    machine->tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage;
+                    machine->tlb[indiceTLB].readOnly = currentThread->space->pageTable[numPag].readOnly;
+                    machine->tlb[indiceTLB].valid = true;
+                    if (indiceTLB > 3)
+                    {
+                        indiceTLB = 0;
+                    }
+                    else indiceTLB ++;
+                }
+
+            }
+        }
+        break;
     default:
         printf("Unexpected user mode exception %d %d\n", which, type);
         ASSERT(false);

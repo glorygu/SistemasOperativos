@@ -100,7 +100,7 @@ AddrSpace::AddrSpace(OpenFile *executable)
     	pageTable[i].valid = false;
 	#else
         pageTable[i].valid = true;
-        #endif
+    #endif
         pageTable[i].use = false;
         pageTable[i].dirty = false ;
         pageTable[i].readOnly = false;  // if the code segment was entirely on
@@ -221,7 +221,7 @@ void AddrSpace::SaveState()
 void AddrSpace::RestoreState()
 {
     #ifndef VM
-    printf ("en restore state"); 
+    printf ("en restore state");
     machine->pageTable = pageTable;
     machine->pageTableSize = numPages;
 	#endif
