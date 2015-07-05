@@ -80,7 +80,9 @@ USERPROG_H = ../userprog/addrspace.h\
 	../machine/translate.h\
 	../userprog/nachostabla.h\
 	../userprog/nachossemtabla.h\
-	../userprog/nachoshilotabla.h
+	../userprog/nachoshilotabla.h\
+	../userprog/entradainvertida.h\
+	../userprog/tablainvertida.h
 
 USERPROG_C = ../userprog/addrspace.cc\
 	../userprog/bitmap.cc\
@@ -92,14 +94,18 @@ USERPROG_C = ../userprog/addrspace.cc\
 	../machine/translate.cc\
 	../userprog/nachostabla.cc\
 	../userprog/nachossemtabla.cc\
-	../userprog/nachoshilotabla.cc
+	../userprog/nachoshilotabla.cc\
+	../userprog/entradainvertida.cc\
+	../userprog/tablainvertida.cc
 
 USERPROG_O = addrspace.o bitmap.o exception.o progtest.o console.o machine.o \
-	mipssim.o translate.o nachostabla.o nachossemtabla.o nachoshilotabla.o
+	mipssim.o translate.o nachostabla.o nachossemtabla.o nachoshilotabla.o entradainvertida.o tablainvertida.o
 
-VM_H = 
-VM_C = 
-VM_O = 
+VM_H = 	../userprog/entradainvertida.h\
+	../userprog/tablainvertida.h
+VM_C = 	../userprog/entradainvertida.cc\
+	../userprog/tablainvertida.cc
+VM_O = entradainvertida.o tablainvertida.o
 
 FILESYS_H =../filesys/directory.h \
 	../filesys/filehdr.h\
