@@ -96,10 +96,11 @@ void Create(char *name);
 /* Open the Nachos file "name", and return an "OpenFileId" that can 
  * be used to read and write to the file.
  */
+ /*
 OpenFileId Open(char *name){
 
 }
-
+*/
 /* Write "size" bytes from "buffer" to the open file. */
 void Write(char *buffer, int size, OpenFileId id);
 //unix syscall write(openfile id, buffer, size)
