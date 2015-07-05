@@ -16,6 +16,7 @@
 #include "stats.h"
 #include "timer.h"
 #include "bitmap.h"
+#include "swap.h"
 #ifdef USER_PROGRAM
 #include "machine.h"
 extern Machine* machine;	// user program memory and registers
@@ -29,6 +30,7 @@ extern int indiceTLB;
 extern int indiceMemoria;
 extern BitMap * MapaMemoria;
 extern BitMap *tlbBitMap;
+extern Swap * swap;
 // Initialization and cleanup routines
 extern void Initialize(int argc, char **argv); 	// Initialization,
 						// called before anything else

@@ -23,7 +23,8 @@ int indiceTLB = 0;
 int indiceMemoria = 0;
 BitMap * MapaMemoria = new BitMap (32);
 BitMap *tlbBitMap = new BitMap (4);
-					// for invoking context switches
+Swap * swap = new Swap ( );
+BitMap * bitmapSwap = new BitMap(64);					// for invoking context switches
 
 #ifdef FILESYS_NEEDED
 FileSystem  *fileSystem;
