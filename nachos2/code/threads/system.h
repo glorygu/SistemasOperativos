@@ -17,6 +17,7 @@
 #include "timer.h"
 #include "bitmap.h"
 #include "swap.h"
+#include "tablainvertida.h"
 #ifdef USER_PROGRAM
 #include "machine.h"
 extern Machine* machine;	// user program memory and registers
@@ -32,6 +33,7 @@ extern BitMap * MapaMemoria;
 extern BitMap *tlbBitMap;
 extern Swap * swap;
 extern BitMap * bitmapSwap;
+extern TablaInvertida * TablaInv;
 // Initialization and cleanup routines
 extern void Initialize(int argc, char **argv); 	// Initialization,
 						// called before anything else
