@@ -15,7 +15,11 @@ class Swap{
   Swap();
   ~Swap();
 
-  bool isSwaped(int page);
+  bool isSwaped(int page){
+   
+    return bitmapSwap->Test(page);
+  }
+
   bool sacarDelSwap(int page, int frame);
   bool meterAlSwap(int frame);
   //BitMap * bitmapSwap;

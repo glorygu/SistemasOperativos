@@ -22,10 +22,7 @@ Swap::~Swap(){
   //delete archivoSwap;
   //fileSystem->Remove(archivoSwapName.c_str());
 }
- bool Swap::isSwaped(int page){
-   
-    return bitmapSwap->Test(page);
-  }
+
 // Saca una pagina de swap a memoria
 //page es la pagina a sacar del swap y frame es el frame en memoria donde se va a meter la informacion de page
 bool Swap::sacarDelSwap(int page, int frame){
