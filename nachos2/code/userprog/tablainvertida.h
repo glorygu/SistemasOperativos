@@ -1,7 +1,7 @@
 #ifndef TABLAINVERTIDA_H
 #define TABLAINVERTIDA_H
 
-#include entradainvertida.h
+#include "entradainvertida.h"
 
 class TablaInvertida {
   public:
@@ -12,7 +12,8 @@ class TablaInvertida {
     int Find();
 
   private:
-    EntradaInvertida[] entradas;
+    EntradaInvertida* entradas;
+    int tam;
 };
 
 #endif // TABLAINVERTIDA_H

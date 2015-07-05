@@ -1,12 +1,9 @@
-#include tablainvertida.h
+#include "tablainvertida.h"
 
 TablaInvertida::TablaInvertida(int n)
 {
-    entradas = new EntradaInvertida[n];
-    for (int i = 0; i < n; i++)
-    {
-        entradas[i] = new EntradaInvertida();
-    }
+	tam = n;
+    entradas = new EntradaInvertida[tam];
 }
 
 TablaInvertida::~TablaInvertida()
@@ -29,9 +26,9 @@ int TablaInvertida::Find()
     int indice = -1;
     int i = 0;
     bool encontrado = false;
-    while (i < entradas.size() && !encontrado)
+    while (i < tam && !encontrado)
     {
-        if (entradas[i] -> valida = true)
+        if (entradas[i].valida = true)
         {
             indice = i;
             encontrado = true;

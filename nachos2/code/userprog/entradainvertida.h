@@ -6,9 +6,9 @@ class EntradaInvertida {
   public:
     EntradaInvertida();
     ~EntradaInvertida();
-    int posFisica;
-    int posVirtual;
-    bool valida;
+    int posFisica = 0;
+    int posVirtual = 0;
+    bool valida = false;
 
   private:
 };

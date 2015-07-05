@@ -1,4 +1,4 @@
-#include entradainvertida.h
+#include "entradainvertida.h"
 
 EntradaInvertida::EntradaInvertida()
 {
