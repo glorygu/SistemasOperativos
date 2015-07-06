@@ -4,6 +4,8 @@
 #include "openfile.h"
 #include <vector>
 #include <string>
+#include <cstdlib>
+
 //#include "bitmap.h"
 #define pageNum 64
 
@@ -17,8 +19,9 @@ class Swap{
 
   bool isSwaped(int page);
   bool sacarDelSwap(int page, int frame);
-  bool meterAlSwap(int frame);
-  //BitMap * bitmapSwap;
+  int meterAlSwap(int frame);
+
+  BitMap * bitmapSwap = new BitMap(64);
  private:
 
 

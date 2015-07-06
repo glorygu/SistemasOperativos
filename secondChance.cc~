@@ -1,0 +1,42 @@
+//int ultimoReemplazo es una variable global de system 
+
+void secondChanceMemoria ( ){
+	bool victima_encontrada = false; 
+	int indice = ultimoReemplazo; 
+	int posSwap = -1;
+	int cont = 0; 
+	while (!victima_encontrada && cont <32){
+		if (pageTable[TablaInv->entradas[indice]->posVirtual].use == false ){
+		 //toma esa esa pagina como victima
+		 ultimoReemplazo = indice; 
+		 if (pageTable[TablaInv->entradas[indice]->posVirtual].dirty == true){
+		 	//tiene que meter al swap 
+		 	
+		 	posSwap = swap->meterAlSwap(ultimoReemplazo);
+		 	pageTable[TablaInv->entradas[indice]->posVirtual].physicalPage = -1*posSwap;
+		 	TablaInv->Clear (indice);
+		 }
+		 pageTable[TablaInv->entradas[indice]->posVirtual].valid = false; 
+		 victima_encontrada = true; 
+		}
+		else{
+		if (indice >=31){
+		indice = 0;
+		}
+		else indice ++;
+		}
+-		cont ++;
+	}
+	if (cont >= 32 || !victima_encontrada){
+		ultimoReemplazo++;
+	}
+	
+}
+
+void secondChanceTLB ( ){
+bool victima_encontrada = false; 	
+int cont = 0; 
+while (!victima_encontrada && cont < 4){
+	
+	}
+}
