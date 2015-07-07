@@ -566,6 +566,7 @@ ExceptionHandler(ExceptionType which)
         }
         break;
 	case PageFaultException:
+		int frameDisponible;
         printf ("Entro en Page Fault Exception %d\n", PageFaultException);
         DEBUG ('n', "PAGE FAULT EXCEPTION"); 
         direccionLogica = machine->ReadRegister (39);
@@ -615,41 +616,49 @@ ExceptionHandler(ExceptionType which)
                 indiceTLB = indiceTLB++%4;  //algoritmo de reemplazo
             }
         } else {
-            //si la p[gina es inválida (no esta en pageTable)
+            //si la pagina es inválida (no esta en pageTable)
             printf ("Pagina invalida \n"); 
             if (currentThread->space->pageTable [numPag].dirty){
                 printf ("Pagina sucia \n"); 
                 //si la pagina fue modificada (dirty)
                 //sacar de swap
+				frameDisponible = TablaInv -> Find(); //busca una posicion libre en memoria
+				if (frameDisponible == -1)
+				{
+					//algoritmo de reemplazo
+				}
+
 			} else {
 			printf ("Pagina limpia \n"); 
                 //si la pagina no ha sido modificada (limpia)
 			printf ("Pagina limpia %d \n", currentThread->space->encabezado.initData.size);
-				if (direccionLogica <= currentThread->space->encabezado.initData.size){
+				if (direccionLogica < currentThread->space->encabezado.initData.size + currentThread->space->encabezado.code.size){
                 //es pagina de codigo o datos inicializados
                 		
                 		printf ("La pagina es de codigo o de datos inicializados");
 				sleep (5);
 				OpenFile* archivo;
-				int frameDisponible =MapaMemoria -> Find();
 				printf (currentThread->nombreArchivo);
-				bool abierto =false;// buscarArchivoAbierto(currentThread->nombreArchivo);	//revisa si el archivo ejecutable originakl sigue abierto
+				bool abierto = buscarArchivoAbierto(currentThread->nombreArchivo);	//revisa si el archivo ejecutable originakl sigue abierto
 				printf ("pregunta si esta abierto \n"); 
 				if (!abierto){
 					//si el archivo ya esta cerrado, se vuelve a abrir
+					printf("Archivo cerrado"); 
 					archivo = fileSystem->Open(currentThread->nombreArchivo);
+
 				}
 				else {
+				printf ("archivo abierto"); 
 					archivo = currentThread->space->archivoEjecutable;	//g
 				}
 				printf ("Se supone que ya reviso archivo \n");
-				if (frameDisponible < 0){
+				frameDisponible = TablaInv->Find(); //busca si hay frame libre en memoria
+				if (frameDisponible == -1){
 					printf ("no hay frame disponible"); 
-					//preunta si hay frame libre en memoria
-					//si no hay frame libre, crear uno
+					//algoritmo de reemplazo
 					
 				}
-				archivo -> ReadAt(&(machine -> mainMemory[frameDisponible*PageSize]), PageSize, direccionLogica);
+				archivo -> ReadAt(&(machine -> mainMemory[frameDisponible*PageSize]), PageSize, currentThread -> space -> encabezado.code.inFileAddr+numPag*PageSize);
 				currentThread->space->pageTable[numPag].physicalPage = frameDisponible;
 				currentThread->space->pageTable[numPag].valid = true;
 				if (direccionLogica < currentThread->space->encabezado.code.size){
@@ -664,16 +673,18 @@ ExceptionHandler(ExceptionType which)
 				machine->tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage;
 				machine->tlb[indiceTLB].readOnly = currentThread->space->pageTable[numPag].readOnly;
 				machine->tlb[indiceTLB].valid = true;
+machine->tlb[indiceTLB].use = currentThread->space->pageTable[numPag].use;
+machine->tlb[indiceTLB].dirty = currentThread->space->pageTable[numPag].dirty;
 				indiceTLB = (indiceTLB++)%4;
        		}
             else {
             printf ("es de datos no inicializados o pila");
             sleep (5);
                 //datos no inicializados o pila
-                int frameDisponible =MapaMemoria -> Find();
-                if (frameDisponible < 0){
-					//preunta si hay frame libre en memoria
-					//si no hay frame libre, crear uno
+                frameDisponible = TablaInv->Find();//busca si hay posicion libre en memoria
+                if (frameDisponible == -1){
+					//pregunta si hay frame libre en memoria
+					//si no hay frame libre, corre algoritmo de reemplazo
 					
 				}
 				currentThread->space->pageTable[numPag].physicalPage = frameDisponible;
@@ -684,6 +695,8 @@ ExceptionHandler(ExceptionType which)
 				machine->tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage;
 				machine->tlb[indiceTLB].readOnly = currentThread->space->pageTable[numPag].readOnly;
 				machine->tlb[indiceTLB].valid = true;
+machine->tlb[indiceTLB].use = currentThread->space->pageTable[numPag].use;
+machine->tlb[indiceTLB].dirty = currentThread->space->pageTable[numPag].dirty;
 				indiceTLB = indiceTLB++%4;
             }
         
