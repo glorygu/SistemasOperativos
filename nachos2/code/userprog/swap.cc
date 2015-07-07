@@ -4,38 +4,33 @@
 #include <sstream>
 #include "machine.h"
 
-//definir pageNum como 64 adonde no se, puede ser en system o machine
-//crear el swap en system y definirlo por todo lado
+
 Swap::Swap( ){
 
   std::stringstream nameStream;
   nameStream << "Swap.";
-  nombreArchivoSwap = nameStream.str();bitmapSwap = new BitMap(64);
+  nombreArchivoSwap = nameStream.str();
+  bitmapSwap = new BitMap(64);
   fileSystem->Create((char*)nombreArchivoSwap .c_str(), pageNum * PageSize);
   archivoSwap = fileSystem->Open((char*)nombreArchivoSwap .c_str());
-  //bitmapSwap = new BitMap (pageNum);
+
 
 }
 
 Swap::~Swap(){
-  //delete archivoSwap;
-  //fileSystem->Remove(archivoSwapName.c_str());
+
 }
- bool Swap::isSwaped(int page){
-   
-    return bitmapSwap->Test(page);
-  }
+
 // Saca una pagina de swap a memoria
 //page es la pagina a sacar del swap y frame es el frame en memoria donde se va a meter la informacion de page
 bool Swap::sacarDelSwap(int pos, int frame){
 
-  int page = abs (pos);
+  int page = abs (pos);//saca valor absoluto de pos
   int cantidadInfoLeida;
   char* dest = machine->mainMemory + frame * PageSize; 
   cantidadInfoLeida = archivoSwap->ReadAt(dest, PageSize, page * PageSize); //carga a memoria
 //devuelve la cantidad de caracteres pasados a la memoria
-  bool leyoBien = (cantidadInfoLeida == PageSize);//manejo de errores
-  //verifica que lo que leyo sea del mismo tamaño que PageSize
+  bool leyoBien = (cantidadInfoLeida == PageSize);
   if (leyoBien){
 
 	currentThread->space->pageTable[page].valid = true;

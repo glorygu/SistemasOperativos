@@ -5,8 +5,7 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
-
-//#include "bitmap.h"
+#include "bitmap.h"
 #define pageNum 64
 
 
@@ -21,7 +20,7 @@ class Swap{
   bool sacarDelSwap(int page, int frame);
   int meterAlSwap(int frame);
 
-  BitMap * bitmapSwap = new BitMap(64);
+  BitMap * bitmapSwap; 
  private:
 
 
