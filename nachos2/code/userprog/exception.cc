@@ -471,12 +471,25 @@ void Nachos_Yield ( )
 bool buscarArchivoAbierto(char * nombreArchivo )
 {
     bool encontrado = false;
+     bool abierto = false;
     for (int i =0; i < 32; i++)
     {
         if (ArchivosAbiertos[i] != 0 && strcmp(ArchivosAbiertos[i],nombreArchivo)==0)
         {
             encontrado = true;
         }
+    }
+    
+    if (!encontrado){
+   
+    int j = 0; 
+    while (!abierto && j < 32){
+    	if (ArchivosAbiertos [j] == 0){
+    		ArchivosAbiertos [j] = nombreArchivo; 
+    		abierto = true; 
+    	}
+    	j++;
+    }
     }
     return encontrado;
 }

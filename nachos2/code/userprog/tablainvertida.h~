@@ -12,7 +12,11 @@ class TablaInvertida {
     int Find();
 
   private:
+<<<<<<< HEAD
     EntradaInvertida entradas[];
+=======
+    EntradaInvertida* entradas;
+>>>>>>> d58eaafa4b9650bcfd9afca75a05a5d539a109d5
     int tam;
 };
 

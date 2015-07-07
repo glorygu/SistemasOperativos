@@ -10,10 +10,11 @@ class TablaInvertida {
     void Mark(int n);
     void Clear(int n);
     int Find();
-
-  private:
     EntradaInvertida* entradas;
-    int tam;
+    int tam;	
+  private:
+    
+  
 };
 
 #endif // TABLAINVERTIDA_H

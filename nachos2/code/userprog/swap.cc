@@ -10,8 +10,7 @@ Swap::Swap( ){
 
   std::stringstream nameStream;
   nameStream << "Swap.";
-  nombreArchivoSwap = nameStream.str();
-
+  nombreArchivoSwap = nameStream.str();bitmapSwap = new BitMap(64);
   fileSystem->Create((char*)nombreArchivoSwap .c_str(), pageNum * PageSize);
   archivoSwap = fileSystem->Open((char*)nombreArchivoSwap .c_str());
   //bitmapSwap = new BitMap (pageNum);
@@ -28,13 +27,12 @@ Swap::~Swap(){
   }
 // Saca una pagina de swap a memoria
 //page es la pagina a sacar del swap y frame es el frame en memoria donde se va a meter la informacion de page
-bool Swap::sacarDelSwap(int page, int frame){
+bool Swap::sacarDelSwap(int pos, int frame){
 
-
+  int page = abs (pos);
   int cantidadInfoLeida;
-  char* dest = machine->mainMemory + frame * PageSize; //no es necesario si tenemos la tabla invertida xq si se tiene le damos ipt[frame]
-
- cantidadInfoLeida = archivoSwap->ReadAt(dest, PageSize, page * PageSize); //carga a memoria
+  char* dest = machine->mainMemory + frame * PageSize; 
+  cantidadInfoLeida = archivoSwap->ReadAt(dest, PageSize, page * PageSize); //carga a memoria
 //devuelve la cantidad de caracteres pasados a la memoria
   bool leyoBien = (cantidadInfoLeida == PageSize);//manejo de errores
   //verifica que lo que leyo sea del mismo tamaño que PageSize
@@ -50,30 +48,14 @@ bool Swap::sacarDelSwap(int page, int frame){
 
 //Mete una pagina de memoria al swap
 //Recibe el frame de memoria a meter al swap
-bool Swap::meterAlSwap(int frame){
+int Swap::meterAlSwap( int frame){
 
+int pos = bitmapSwap->Find( );
+   if (pos > 0){
+    char* source = machine->mainMemory + frame * PageSize; //lo que se va a meter
 
-  int page = 0;//space->getPageNumber(frame);
-//saca de la tabla invertida
+    charsWritten = archivoSwap->WriteAt(source, PageSize, pos * PageSize); //se trae de memoria y no 
+    }
 
-  TranslationEntry entrada = currentThread->space->pageTable[page];
-//el dirty lo hacemos afuera
-  if ( !isSwaped(page)){ //preguntar si no esta en el swap
-
-    int charsWritten;
-    char* source = machine->mainMemory + frame * PageSize; //lo que se va a mentar
-
-    charsWritten = archivoSwap->WriteAt(source, PageSize, page * PageSize); //se trae de memoria y no lo quita
-    ASSERT(charsWritten == PageSize);
-  }
-//se hace afuera, la parte del entry esta en exception
-/*  entry.valid = false;
-  entry.dirty = false;
-  entry.physicalPage = -1;
-  swapMap[page] = true;
-  coremap->usedFrames[frame] = true;
-
-  space->savePageTableEntry(entry, entry.virtualPage);
-*/
-  return true;
+  return pos;
 }

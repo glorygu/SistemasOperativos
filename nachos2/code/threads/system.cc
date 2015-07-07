@@ -24,9 +24,9 @@ int indiceMemoria = 0;
 BitMap * MapaMemoria = new BitMap (32);
 BitMap *tlbBitMap = new BitMap (4);
 Swap * swap = new Swap ( );
-BitMap * bitmapSwap = new BitMap(64);					// for invoking context switches
+//BitMap * bitmapSwap = new BitMap (64);	// for invoking context switches
 TablaInvertida * TablaInv = new TablaInvertida(32);
-
+int ultimoReemplazo = 0; 
 #ifdef FILESYS_NEEDED
 FileSystem  *fileSystem;
 #endif

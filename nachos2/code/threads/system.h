@@ -32,8 +32,9 @@ extern int indiceMemoria;
 extern BitMap * MapaMemoria;
 extern BitMap *tlbBitMap;
 extern Swap * swap;
-extern BitMap * bitmapSwap;
+//extern BitMap * bitmapSwap;
 extern TablaInvertida * TablaInv;
+extern int ultimoReemplazo; 
 // Initialization and cleanup routines
 extern void Initialize(int argc, char **argv); 	// Initialization,
 						// called before anything else
