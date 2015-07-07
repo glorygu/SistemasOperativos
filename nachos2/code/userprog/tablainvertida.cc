@@ -35,5 +35,9 @@ int TablaInvertida::Find()
         }
         i++;
     }
+    if (encontrado)
+    {
+	Mark(indice);
+    }
     return indice;
 }

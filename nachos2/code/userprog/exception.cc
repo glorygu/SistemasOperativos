@@ -517,19 +517,19 @@ void secondChanceMemoria ( )
     int cont = 0;
     while (!victima_encontrada && cont <32)
     {
-        if (pageTable[TablaInv->entradas[indice]->posVirtual].use == false )
+        if (currentThread->space->pageTable[TablaInv->entradas[indice].posVirtual].use == false )
         {
             //toma esa esa pagina como victima
             ultimoReemplazo = indice;
-            if (pageTable[TablaInv->entradas[indice]->posVirtual].dirty == true)
+            if (currentThread->space->pageTable[TablaInv->entradas[indice].posVirtual].dirty == true)
             {
                 //tiene que meter al swap
 
-                posSwap = swap->meterAlSwap(ultimoReemplazo);
-                pageTable[TablaInv->entradas[indice]->posVirtual].physicalPage = -1*posSwap;
+                posSwap = archivoSwap->meterAlSwap(ultimoReemplazo);
+                currentThread->space->pageTable[TablaInv->entradas[indice].posVirtual].physicalPage = -1*posSwap;
                 TablaInv->Clear (indice);
             }
-            pageTable[TablaInv->entradas[indice]->posVirtual].valid = false;
+            currentThread->space->pageTable[TablaInv->entradas[indice].posVirtual].valid = false;
             victima_encontrada = true;
         }
         else
@@ -540,7 +540,7 @@ void secondChanceMemoria ( )
             }
             else indice ++;
         }
-        -		cont ++;
+        		cont ++;
     }
     if (cont >= 32 || !victima_encontrada)
     {
@@ -668,27 +668,25 @@ ExceptionHandler(ExceptionType which)
         }
         break;
     case PageFaultException:
+	sleep (5);
         int frameDisponible;
-        printf ("Entro en Page Fault Exception %d\n", PageFaultException);
+        //printf ("Entro en Page Fault Exception %d\n", PageFaultException);
         DEBUG ('n', "PAGE FAULT EXCEPTION");
         direccionLogica = machine->ReadRegister (39);
         numPag = direccionLogica/PageSize;
         printf ("En page fault el numero de pagina es %d\n y la direccion es %d, initDataSize %d, codeSize %d \n", numPag, direccionLogica,currentThread->space->encabezado.initData.size,currentThread->space->encabezado.code.size);
-        if (numPag == 208||numPag == 0)
-        {
-            sleep (5);
-        }
+        
         posLibre = tlbBitMap->Find();
 
 
         if (currentThread->space->pageTable[numPag].valid) //verifica el estado
         {
             //copiar datos del pageTable al TLB
-            printf ("Pagina valida en pageTable");
-            sleep (5);
+            printf ("Pagina valida en pageTable \n");
+            
             if (posLibre >= 0)
             {
-                printf ("Hay espacio en TLB");
+                printf ("Hay espacio en TLB \n");
                 sleep (5);
                 machine -> tlb [indiceTLB].valid = true;
                 machine -> tlb [indiceTLB].use = currentThread->space->pageTable [numPag].use;
@@ -703,7 +701,7 @@ ExceptionHandler(ExceptionType which)
             {
                 //si no hay posiciones libres en el TLB
                 printf ("No hay posiciones libres en el TLB");
-                sleep (5);
+                
                 secondChanceTLB(); //algoritmo de reemplazo
 
                 //cargar pagina en tlb
@@ -732,7 +730,7 @@ ExceptionHandler(ExceptionType which)
                     frameDisponible = ultimoReemplazo;
                 }
 
-                bool sacado = Swap -> sacarDelSwap(currentThread->space->pageTable[numPag].physicalPage, frameDisponible);
+                bool sacado = archivoSwap -> sacarDelSwap(currentThread->space->pageTable[numPag].physicalPage, frameDisponible);
 
                 if (posLibre == -1)
                 {
@@ -741,46 +739,46 @@ ExceptionHandler(ExceptionType which)
                 }
 
                 //actualizar tlb
-                machine -> tlb[indiceTLB].virtualPage = currentThread->space->pageTable[numPag].virtualPage
-                                                        machine -> tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage
-                                                                machine -> tlb[indiceTLB].valid = currentThread->space->pageTable[numPag].valid
-                                                                        machine -> tlb[indiceTLB].dirty = currentThread->space->pageTable[numPag].dirty
-                                                                                machine -> tlb[indiceTLB].readOnly = currentThread->space->pageTable[numPag].readOnly
-                                                                                        machine -> tlb[indiceTLB].use = currentThread->space->pageTable[numPag].use
+                machine -> tlb[indiceTLB].virtualPage = currentThread->space->pageTable[numPag].virtualPage;
+                                                        machine -> tlb[indiceTLB].physicalPage = currentThread->space->pageTable[numPag].physicalPage;
+                                                                machine -> tlb[indiceTLB].valid = currentThread->space->pageTable[numPag].valid;
+                                                                        machine -> tlb[indiceTLB].dirty = currentThread->space->pageTable[numPag].dirty;
+                                                                                machine -> tlb[indiceTLB].readOnly = currentThread->space->pageTable[numPag].readOnly;
+                                                                                        machine -> tlb[indiceTLB].use = currentThread->space->pageTable[numPag].use;
 
             }
             else
             {
                 printf ("Pagina limpia \n");
                 //si la pagina no ha sido modificada (limpia)
-                printf ("Pagina limpia %d \n", currentThread->space->encabezado.initData.size);
+                
                 if (direccionLogica < currentThread->space->encabezado.initData.size + currentThread->space->encabezado.code.size)
                 {
                     //es pagina de codigo o datos inicializados
 
-                    printf ("La pagina es de codigo o de datos inicializados");
-                    sleep (5);
+                    printf ("La pagina es de codigo o de datos inicializados \n");
+                    
                     OpenFile* archivo;
-                    printf (currentThread->nombreArchivo);
-                    bool abierto = buscarArchivoAbierto(currentThread->nombreArchivo);	//revisa si el archivo ejecutable originakl sigue abierto
-                    printf ("pregunta si esta abierto \n");
-                    if (!abierto)
+                    bool abierto = false;
+		    if (!abierto)
                     {
                         //si el archivo ya esta cerrado, se vuelve a abrir
-                        printf("Archivo cerrado");
+                        printf("Archivo abierto \n");
                         archivo = fileSystem->Open(currentThread->nombreArchivo);
 
                     }
                     else
                     {
-                        printf ("archivo abierto");
-                        archivo = currentThread->space->archivoEjecutable;	//g
+                        
+                        archivo = currentThread->space->archivoEjecutable;	
                     }
-                    printf ("Se supone que ya reviso archivo \n");
+     
+
                     frameDisponible = TablaInv->Find(); //busca si hay frame libre en memoria
+               
                     if (frameDisponible == -1)
                     {
-                        printf ("no hay frame disponible");
+                        printf ("no hay frame disponible \n");
                         //algoritmo de reemplazo
                         secondChanceMemoria();
                         frameDisponible = ultimoReemplazo;
@@ -792,7 +790,6 @@ ExceptionHandler(ExceptionType which)
                     if (direccionLogica < currentThread->space->encabezado.initData.inFileAddr)
                     {
                         //si es pagina de codigo no se deberia poder modificar
-                        printf ("ES pagina de codigo \n");
                         currentThread->space->pageTable[numPag].readOnly = true;
                     }
                     else
@@ -800,6 +797,7 @@ ExceptionHandler(ExceptionType which)
                         currentThread->space->pageTable[numPag].readOnly = false;
                     }
 
+               
                     if (posLibre == -1)
                     {
                         secondChanceTLB();
@@ -815,8 +813,8 @@ ExceptionHandler(ExceptionType which)
                 }
                 else
                 {
-                    printf ("es de datos no inicializados o pila");
-                    sleep (5);
+                    printf ("es de datos no inicializados o pila \n");
+                    
                     //datos no inicializados o pila
                     frameDisponible = TablaInv->Find();//busca si hay posicion libre en memoria
                     if (frameDisponible == -1)
