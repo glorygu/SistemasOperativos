@@ -81,6 +81,11 @@ USERPROG_H = ../userprog/addrspace.h\
 	../userprog/nachostabla.h\
 	../userprog/nachossemtabla.h\
 	../userprog/nachoshilotabla.h\
+<<<<<<< HEAD
+	../userprog/entradainvertida.h\
+	../userprog/tablainvertida.h\
+=======
+>>>>>>> d58eaafa4b9650bcfd9afca75a05a5d539a109d5
 	../userprog/swap.h
 
 
@@ -95,10 +100,19 @@ USERPROG_C = ../userprog/addrspace.cc\
 	../userprog/nachostabla.cc\
 	../userprog/nachossemtabla.cc\
 	../userprog/nachoshilotabla.cc\
+<<<<<<< HEAD
+	../userprog/entradainvertida.cc\
+	../userprog/tablainvertida.cc\
+	../userprog/swap.cc
+
+USERPROG_O = addrspace.o bitmap.o exception.o progtest.o console.o machine.o \
+	mipssim.o translate.o nachostabla.o nachossemtabla.o nachoshilotabla.o entradainvertida.o tablainvertida.o swap.o
+=======
 	../userprog/swap.cc
 
 USERPROG_O = addrspace.o bitmap.o exception.o progtest.o console.o machine.o \
 	mipssim.o translate.o nachostabla.o nachossemtabla.o nachoshilotabla.o  swap.o
+>>>>>>> d58eaafa4b9650bcfd9afca75a05a5d539a109d5
 	
 VM_H = 	../userprog/entradainvertida.h\
 	../userprog/tablainvertida.h

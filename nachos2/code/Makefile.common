@@ -98,7 +98,7 @@ USERPROG_C = ../userprog/addrspace.cc\
 	../userprog/swap.cc
 
 USERPROG_O = addrspace.o bitmap.o exception.o progtest.o console.o machine.o \
-	mipssim.o translate.o nachostabla.o nachossemtabla.o nachoshilotabla.o  swap.o
+	mipssim.o translate.o nachostabla.o nachossemtabla.o nachoshilotabla.o swap.o
 	
 VM_H = 	../userprog/entradainvertida.h\
 	../userprog/tablainvertida.h
