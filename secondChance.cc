@@ -32,11 +32,20 @@ void secondChanceMemoria ( ){
 	}
 	
 }
-/**
+
 void secondChanceTLB ( ){
 bool victima_encontrada = false; 	
 int cont = 0; 
+int indiceTemp = indiceTLB;
 while (!victima_encontrada && cont < 4){
-	
+	if (machine -> tlb[indiceTemp].use==false){
+		indiceTLB = indiceTemp;
+		victima_encontrada = true;
 	}
-}**/
+	cont++;
+	}
+	if (indiceTemp >= 3){
+	indiceTemp = 0;
+	} else indiceTemp++;
+	}
+

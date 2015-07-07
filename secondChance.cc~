@@ -32,11 +32,11 @@ void secondChanceMemoria ( ){
 	}
 	
 }
-
+/**
 void secondChanceTLB ( ){
 bool victima_encontrada = false; 	
 int cont = 0; 
 while (!victima_encontrada && cont < 4){
 	
 	}
-}
+}**/
