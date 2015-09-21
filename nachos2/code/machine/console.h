@@ -4,11 +4,7 @@
 //	and a display output, each of which produces/accepts 
 //	characters sequentially.
 //
-//	The console hardware device is asynchronous.  When a character is
-//	written to the device, the routine returns immediately, and an 
-//	interrupt handler is called later when the I/O completes.
-//	For reads, an interrupt handler is called when a character arrives. 
-//
+//	
 //	The user of the device can specify the routines to be called when 
 //	the read/write interrupts occur.  There is a separate interrupt
 //	for read and write, and the device is "duplex" -- a character
